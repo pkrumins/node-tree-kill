@@ -20,6 +20,8 @@ Methods
 
 Sends signal `signal` to all children processes of the process with pid `pid`, including `pid`. Signal defaults to `SIGTERM`.
 
+Currently works on Linux only as it uses `ps -o pid --no-headers --ppid PID` to find the parent pids of `PID`.
+
 Install
 =======
 
