@@ -1,4 +1,5 @@
 var spawn = require('child_process').spawn;
+var once = require('once');
 
 module.exports = function (pid, signal) {
     var tree = {};
@@ -42,7 +43,8 @@ function buildProcessTree (parentPid, tree, pidsToProcess, cb) {
         var data = data.toString('ascii');
         allData += data;
     });
-    ps.on('exit', function (code) {
+
+    var onExitClose = once(function (code) {
         delete pidsToProcess[parentPid];
 
         if (code != 0) {
@@ -73,5 +75,7 @@ function buildProcessTree (parentPid, tree, pidsToProcess, cb) {
             buildProcessTree(pid, tree, pidsToProcess, cb);
         });
     });
-}
 
+    ps.on('exit', onExitClose);
+    ps.on('close', onExitClose);
+}
