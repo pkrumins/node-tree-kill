@@ -15,15 +15,24 @@ function killAll (tree, signal) {
     Object.keys(tree).forEach(function (pid) {
         tree[pid].forEach(function (pidpid) {
             if (!killed[pidpid]) {
-                process.kill(pidpid, signal);
+                killPid(pidpid, signal);
                 killed[pidpid] = 1;
             }
         });
         if (!killed[pid]) {
-            process.kill(pid, signal);
+            killPid(pid, signal);
             killed[pid] = 1;
         }
     });
+}
+
+function killPid(pid, signal) {
+    try {
+        process.kill(pid, signal);
+    }
+    catch (err) {
+        if (err.code !== 'ESRCH') throw err;
+    }
 }
 
 function buildProcessTree (parentPid, tree, pidsToProcess, cb) {
