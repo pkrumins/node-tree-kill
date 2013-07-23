@@ -24,5 +24,12 @@
         "email" : "peteris.krumins@gmail.com",
         "url" : "http://www.catonmat.net"
     },
+    "contributors" : [
+        {
+            "name" : "Todd Wolfson",
+            "email" : "todd@twolfson.com",
+            "url" : "http://twolfson.com/"
+        }
+    ],
     "license" : "MIT"
 }
