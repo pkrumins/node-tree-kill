@@ -20,7 +20,9 @@ Methods
 
 Sends signal `signal` to all children processes of the process with pid `pid`, including `pid`. Signal defaults to `SIGTERM`.
 
-Currently works on Linux only as it uses `ps -o pid --no-headers --ppid PID` to find the parent pids of `PID`.
+For Linux, this uses `ps -o pid --no-headers --ppid PID` to find the parent pids of `PID`.
+
+For Windows, this uses `'taskkill /pid PID /T /F'` to kill the process tree.
 
 Install
 =======
