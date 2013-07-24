@@ -1,14 +1,21 @@
-var spawn = require('child_process').spawn;
+var childProcess = require('child_process').spawn;
+var spawn = childProcess.spawn;
+var exec = childProcess.exec;
 var once = require('once');
+var isWindows = process.platform === 'win32';
 
 module.exports = function (pid, signal) {
-    var tree = {};
-    tree[pid] = [];
-    var pidsToProcess = {};
-    pidsToProcess[pid] = 1;
-    buildProcessTree(pid, tree, pidsToProcess, function () {
-        killAll(tree, signal);
-    });
+    if (isWindows) {
+        exec('taskkill /pid ' + pid + ' /T /F');
+    } else {
+        var tree = {};
+        tree[pid] = [];
+        var pidsToProcess = {};
+        pidsToProcess[pid] = 1;
+        buildProcessTree(pid, tree, pidsToProcess, function () {
+            killAll(tree, signal);
+        });
+    }
 }
 
 function killAll (tree, signal) {
