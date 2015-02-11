@@ -28,7 +28,7 @@ function killAll (tree, signal) {
             }
         });
         if (!killed[pid]) {
-            killPid(pid, signal);
+            killPid(parseInt(pid, 10), signal);
             killed[pid] = 1;
         }
     });
