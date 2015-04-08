@@ -1,6 +1,6 @@
 {
     "name" : "tree-kill",
-    "version" : "0.0.6",
+    "version" : "0.0.7",
     "description" : "kill trees of processes",
     "main" : "index.js",
     "repository" : {
@@ -29,6 +29,11 @@
             "name" : "Todd Wolfson",
             "email" : "todd@twolfson.com",
             "url" : "http://twolfson.com/"
+        },
+        {
+            "name" : "William Hilton",
+            "email" : "wmhilton@gmail.com",
+            "url" : "http://wmhilton.com/"
         }
     ],
     "license" : "MIT"
