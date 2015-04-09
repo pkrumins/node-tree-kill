@@ -4,16 +4,28 @@ var exec = childProcess.exec;
 var once = require('once');
 var isWindows = process.platform === 'win32';
 
-module.exports = function (pid, signal) {
+module.exports = function (pid, signal, callback) {
     if (isWindows) {
-        exec('taskkill /pid ' + pid + ' /T /F');
+        exec('taskkill /pid ' + pid + ' /T /F', callback);
     } else {
         var tree = {};
         tree[pid] = [];
         var pidsToProcess = {};
         pidsToProcess[pid] = 1;
         buildProcessTree(pid, tree, pidsToProcess, function () {
-            killAll(tree, signal);
+            try {
+                killAll(tree, signal);
+            }
+            catch (err) {
+                if (callback) {
+                    return callback(err);
+                } else {
+                    throw err;
+                }
+            }
+            if (callback) {
+                return callback();
+            }
         });
     }
 }
