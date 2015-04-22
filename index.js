@@ -3,6 +3,8 @@ var spawn = childProcess.spawn;
 var exec = childProcess.exec;
 var once = require('once');
 var isWindows = process.platform === 'win32';
+var isDarwin = process.platform === 'darwin';
+var isSunOS = process.platform === 'sunos';
 
 module.exports = function (pid, signal) {
     if (isWindows) {
@@ -44,7 +46,19 @@ function killPid(pid, signal) {
 }
 
 function buildProcessTree (parentPid, tree, pidsToProcess, cb) {
-    var ps = spawn('ps', ['-o', 'pid', '--no-headers', '--ppid', parentPid]);
+    var ps;
+
+    if (isDarwin || isSunOS) {
+        // In Darwin and SunOS, we're missing the parent pid and no-headers options
+        if (isDarwin) {
+            ps = spawn('ps', ['ax', '-o', 'ppid,pid']);
+        } else {
+            ps = spawn('ps', ['-A', '-o', 'ppid,pid']);
+        }
+    } else {
+        ps = spawn('ps', ['-o', 'pid', '--no-headers', '--ppid', parentPid]);
+    }
+
     var allData = '';
     ps.stdout.on('data', function (data) {
         var data = data.toString('ascii');
@@ -62,17 +76,32 @@ function buildProcessTree (parentPid, tree, pidsToProcess, cb) {
             return
         }
 
-        pids = [];
-        pid = '';
-        for (i = 0; i < allData.length; i++) {
-            if (allData[i] == '\n') {
-                pids.push(parseInt(pid, 10));
-                pid = '';
-                continue;
-            }
-            if (allData[i] != ' ') {
-                pid += allData[i];
-            }
+        if (isDarwin || isSunOS) {
+            // A header, followed by lines containing two columns: parentPid, pid.
+            pids = allData
+                .split("\n")
+                // skip the header that ps draws
+                .filter(function (line, i) { return i !== 0; })
+                // trim line and pair into parent, child pairs
+                .map(function (line) {
+                    // Example line output:
+                    // " 1826  1829"
+                    var tokens = line.trim().split(" ");
+                    return [parseInt(tokens[0], 0), parseInt(tokens.pop(), 10)];
+                })
+                .filter(function (pids) {
+                    // match the children that belong to parentPid
+                    return pids[0] === parseInt(parentPid, 10);
+                })
+                .map(function (pids) {
+                    // map to a list of child pids
+                    return pids[1];
+                });
+        } else {
+            // No header, and one column of pids only (belonging to parentPid)
+            pids = allData.split("\n").map(function (pid) {
+                return parseInt(pid.trim(), 10);
+            });
         }
 
         pids.forEach(function (pid) {
