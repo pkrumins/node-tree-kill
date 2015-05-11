@@ -6,50 +6,56 @@ var once = require('once');
 module.exports = function (pid, signal, callback) {
     var tree = {};
     var pidsToProcess = {};
+    tree[pid] = [];
+    pidsToProcess[pid] = 1;
 
     switch (process.platform) {
     case 'win32':
         exec('taskkill /pid ' + pid + ' /T /F', callback);
         break;
     case 'darwin':
+        buildProcessTreeDarwin(pid, tree, pidsToProcess, function () {
+            killAll(tree, signal, callback);
+        });
         break;
     case 'sunos':
+        buildProcessTreeSunOS(pid, tree, pidsToProcess, function () {
+            killAll(tree, signal, callback);
+        });
         break;
     default: // Linux
-        tree[pid] = [];
-        pidsToProcess[pid] = 1;
         buildProcessTree(pid, tree, pidsToProcess, function () {
-            try {
-                killAll(tree, signal);
-            } catch (err) {
-                if (callback) {
-                    return callback(err);
-                } else {
-                    throw err;
-                }
-            }
-            if (callback) {
-                return callback();
-            }
+            killAll(tree, signal, callback);
         });
         break;
     }
 };
 
-function killAll (tree, signal) {
+function killAll (tree, signal, callback) {
     var killed = {};
-    Object.keys(tree).forEach(function (pid) {
-        tree[pid].forEach(function (pidpid) {
-            if (!killed[pidpid]) {
-                killPid(pidpid, signal);
-                killed[pidpid] = 1;
+    try {
+        Object.keys(tree).forEach(function (pid) {
+            tree[pid].forEach(function (pidpid) {
+                if (!killed[pidpid]) {
+                    killPid(pidpid, signal);
+                    killed[pidpid] = 1;
+                }
+            });
+            if (!killed[pid]) {
+                killPid(pid, signal);
+                killed[pid] = 1;
             }
         });
-        if (!killed[pid]) {
-            killPid(pid, signal);
-            killed[pid] = 1;
+    } catch (err) {
+        if (callback) {
+            return callback(err);
+        } else {
+            throw err;
         }
-    });
+    }
+    if (callback) {
+        return callback();
+    }
 }
 
 function killPid(pid, signal) {
@@ -103,4 +109,10 @@ function buildProcessTree (parentPid, tree, pidsToProcess, cb) {
 
     ps.on('exit', onExitClose);
     ps.on('close', onExitClose);
+}
+
+function buildProcessTreeDarwin (parentPid, tree, pidsToProcess, cb) {
+}
+
+function buildProcessTreeSunOS (parentPid, tree, pidsToProcess, cb) {
 }
