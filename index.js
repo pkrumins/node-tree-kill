@@ -1,7 +1,6 @@
 var childProcess = require('child_process');
 var spawn = childProcess.spawn;
 var exec = childProcess.exec;
-var once = require('once');
 var isWindows = process.platform === 'win32';
 
 module.exports = function (pid, signal, callback) {
@@ -63,7 +62,7 @@ function buildProcessTree (parentPid, tree, pidsToProcess, cb) {
         allData += data;
     });
 
-    var onExitClose = once(function (code) {
+    var onClose = function (code) {
         delete pidsToProcess[parentPid];
 
         if (code != 0) {
@@ -93,8 +92,7 @@ function buildProcessTree (parentPid, tree, pidsToProcess, cb) {
             pidsToProcess[pid] = 1;
             buildProcessTree(pid, tree, pidsToProcess, cb);
         });
-    });
+    };
 
-    ps.on('exit', onExitClose);
-    ps.on('close', onExitClose);
+    ps.on('close', onClose);
 }
