@@ -1,37 +1,40 @@
 {
-    "name" : "tree-kill",
-    "version" : "0.1.0",
-    "description" : "kill trees of processes",
-    "main" : "index.js",
-    "repository" : {
-        "type" : "git",
-        "url" : "git://github.com/pkrumins/node-tree-kill.git"
+  "name": "tree-kill",
+  "version": "0.1.0",
+  "description": "kill trees of processes",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/pkrumins/node-tree-kill.git"
+  },
+  "homepage": "https://github.com/pkrumins/node-tree-kill",
+  "keywords": [
+    "tree",
+    "trees",
+    "process",
+    "processes",
+    "kill",
+    "signal"
+  ],
+  "author": {
+    "name": "Peteris Krumins",
+    "email": "peteris.krumins@gmail.com",
+    "url": "http://www.catonmat.net"
+  },
+  "contributors": [
+    {
+      "name": "Todd Wolfson",
+      "email": "todd@twolfson.com",
+      "url": "http://twolfson.com/"
     },
-    "homepage" : "https://github.com/pkrumins/node-tree-kill",
-    "keywords" : [
-        "tree",
-        "trees",
-        "process",
-        "processes",
-        "kill",
-        "signal"
-    ],
-    "author" : {
-        "name" : "Peteris Krumins",
-        "email" : "peteris.krumins@gmail.com",
-        "url" : "http://www.catonmat.net"
-    },
-    "contributors" : [
-        {
-            "name" : "Todd Wolfson",
-            "email" : "todd@twolfson.com",
-            "url" : "http://twolfson.com/"
-        },
-        {
-            "name" : "William Hilton",
-            "email" : "wmhilton@gmail.com",
-            "url" : "http://wmhilton.com/"
-        }
-    ],
-    "license" : "MIT"
+    {
+      "name": "William Hilton",
+      "email": "wmhilton@gmail.com",
+      "url": "http://wmhilton.com/"
+    }
+  ],
+  "license": "MIT",
+  "devDependencies": {
+    "mocha": "^2.2.5"
+  }
 }
