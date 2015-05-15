@@ -8,9 +8,6 @@
         "url" : "git://github.com/pkrumins/node-tree-kill.git"
     },
     "homepage" : "https://github.com/pkrumins/node-tree-kill",
-    "dependencies" : {
-        "once" : "1.1.1"
-    },
     "keywords" : [
         "tree",
         "trees",
