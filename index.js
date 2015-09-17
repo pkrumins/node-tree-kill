@@ -1,3 +1,5 @@
+'use strict';
+
 var childProcess = require('child_process');
 var spawn = childProcess.spawn;
 var exec = childProcess.exec;
@@ -13,17 +15,21 @@ module.exports = function (pid, signal, callback) {
         exec('taskkill /pid ' + pid + ' /T /F', callback);
         break;
     case 'darwin':
-        buildProcessTreeDarwin(pid, tree, pidsToProcess, function () {
+        buildProcessTree(pid, tree, pidsToProcess, function (parentPid) {
+          return spawn('pgrep', ['-P', parentPid]);
+        }, function () {
             killAll(tree, signal, callback);
         });
         break;
-    case 'sunos':
-        buildProcessTreeSunOS(pid, tree, pidsToProcess, function () {
-            killAll(tree, signal, callback);
-        });
-        break;
+    // case 'sunos':
+    //     buildProcessTreeSunOS(pid, tree, pidsToProcess, function () {
+    //         killAll(tree, signal, callback);
+    //     });
+    //     break;
     default: // Linux
-        buildProcessTree(pid, tree, pidsToProcess, function () {
+        buildProcessTree(pid, tree, pidsToProcess, function (parentPid) {
+          return spawn('ps', ['-o', 'pid', '--no-headers', '--ppid', parentPid]);
+        }, function () {
             killAll(tree, signal, callback);
         });
         break;
@@ -66,8 +72,8 @@ function killPid(pid, signal) {
     }
 }
 
-function buildProcessTree (parentPid, tree, pidsToProcess, cb) {
-    var ps = spawn('ps', ['-o', 'pid', '--no-headers', '--ppid', parentPid]);
+function buildProcessTree (parentPid, tree, pidsToProcess, spawnChildProcessesList, cb) {
+    var ps = spawnChildProcessesList(parentPid);
     var allData = '';
     ps.stdout.on('data', function (data) {
         var data = data.toString('ascii');
@@ -82,35 +88,17 @@ function buildProcessTree (parentPid, tree, pidsToProcess, cb) {
             if (Object.keys(pidsToProcess).length == 0) {
                 cb();
             }
-            return
+            return;
         }
 
-        pids = [];
-        pid = '';
-        for (i = 0; i < allData.length; i++) {
-            if (allData[i] == '\n') {
-                pids.push(parseInt(pid, 10));
-                pid = '';
-                continue;
-            }
-            if (allData[i] != ' ') {
-                pid += allData[i];
-            }
-        }
-
-        pids.forEach(function (pid) {
-            tree[parentPid].push(pid)
-            tree[pid] = [];
-            pidsToProcess[pid] = 1;
-            buildProcessTree(pid, tree, pidsToProcess, cb);
+        allData.match(/\d+/g).forEach(function (pid) {
+          pid = parseInt(pid, 10);
+          tree[parentPid].push(pid);
+          tree[pid] = [];
+          pidsToProcess[pid] = 1;
+          buildProcessTree(pid, tree, pidsToProcess, spawnChildProcessesList, cb);
         });
     };
 
     ps.on('close', onClose);
-}
-
-function buildProcessTreeDarwin (parentPid, tree, pidsToProcess, cb) {
-}
-
-function buildProcessTreeSunOS (parentPid, tree, pidsToProcess, cb) {
 }
