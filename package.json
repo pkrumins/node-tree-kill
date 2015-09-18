@@ -31,6 +31,10 @@
       "name": "William Hilton",
       "email": "wmhilton@gmail.com",
       "url": "http://wmhilton.com/"
+    },
+    {
+      "name": "Fabrício Matté",
+      "url": "http://ultcombo.js.org/"
     }
   ],
   "license": "MIT",
