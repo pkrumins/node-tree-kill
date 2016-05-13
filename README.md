@@ -26,6 +26,13 @@ kill(1, 'SIGKILL', function(err) {
 });
 ```
 
+You can also install tree-kill globally and use it as a command:
+```sh
+tree-kill 1          # sends SIGTERM to process 1 and its descendents
+tree-kill 1 SIGTERM  # same
+tree-kill 1 SIGKILL  # sends KILL instead of TERMINATE
+```
+
 Methods
 =======
 
