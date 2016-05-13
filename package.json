@@ -1,6 +1,6 @@
 {
   "name": "tree-kill",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "kill trees of processes",
   "main": "index.js",
   "bin": {
