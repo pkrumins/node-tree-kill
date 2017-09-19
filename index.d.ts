@@ -1,16 +1,16 @@
 /**
- * Kills `pid` and all its children
+ * Kills process identified by `pid` and all its children
  *
  * @param pid
  * @param signal 'SIGTERM' by default
- * @param callback Called when killing of the entire tree is done, and it's the result
- *   of the platform-specific killing command (see docs).
+ * @param callback
  */
 declare function treeKill(
     pid: number,
-    signal: string,
-    callback?: (error: Error, stdout: string, stderr: string) => void,
+    signal?: string | number,
+    callback?: (error?: Error) => void,
 ): void;
+
 declare namespace treeKill {}
 
 export = treeKill;
