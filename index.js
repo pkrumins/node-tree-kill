@@ -80,6 +80,11 @@ function killPid(pid, signal) {
 function buildProcessTree (parentPid, tree, pidsToProcess, spawnChildProcessesList, cb) {
     var ps = spawnChildProcessesList(parentPid);
     var allData = '';
+    
+    ps.on('error', function(e) {
+        // Catch error msg else treekill will throw an uncaught Exception
+    });
+    
     ps.stdout.on('data', function (data) {
         var data = data.toString('ascii');
         allData += data;
