@@ -1,6 +1,6 @@
 var assert = require('assert');
 var fork = require('child_process').fork;
-var kill = require('tree-kill');
+var kill = require('..');
 
 describe('kill()', function(){
     it('should kill a process', function(done){ 
@@ -19,6 +19,15 @@ describe('kill()', function(){
         assert.ok(p.pid)
 
         kill(p.pid, null, function() {
+            return done()
+        })
+    })
+    
+    it('should work if signal is left out', function(done){ 
+        var p = fork('./test/spin')
+        assert.ok(p.pid)
+
+        kill(p.pid, function() {
             return done()
         })
     })

@@ -6,6 +6,9 @@
   "bin": {
     "tree-kill": "cli.js"
   },
+  "scripts": {
+    "test": "mocha"
+  },
   "repository": {
     "type": "git",
     "url": "git://github.com/pkrumins/node-tree-kill.git"
