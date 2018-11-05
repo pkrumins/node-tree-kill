@@ -63,7 +63,12 @@ MIT
 Changelog
 =========
 
-## [1.2.0] - 2017-19-09
+## [1.2.1] - 2018-11-05
+### Changed
+- added missing LICENSE file
+- updated TypeScript definitions
+
+## [1.2.0] - 2017-09-19
 ### Added
 - TypeScript definitions
 ### Changed
