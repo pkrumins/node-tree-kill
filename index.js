@@ -9,7 +9,7 @@ module.exports = function (pid, signal, callback) {
     var pidsToProcess = {};
     tree[pid] = [];
     pidsToProcess[pid] = 1;
-    
+
     if (typeof signal === 'function' && callback === undefined) {
       callback = signal;
       signal = undefined;
@@ -33,7 +33,10 @@ module.exports = function (pid, signal, callback) {
     //     break;
     default: // Linux
         buildProcessTree(pid, tree, pidsToProcess, function (parentPid) {
-          return spawn('ps', ['-o', 'pid', '--no-headers', '--ppid', parentPid]);
+            var ps = spawn('ps', ['-o', 'pid,ppid']);
+            var awk = spawn('awk', ['/ ' + parentPid + '/ {print $1}']);
+            ps.stdout.pipe(awk.stdin);
+            return awk;
         }, function () {
             killAll(tree, signal, callback);
         });
@@ -88,7 +91,7 @@ function buildProcessTree (parentPid, tree, pidsToProcess, spawnChildProcessesLi
     var onClose = function (code) {
         delete pidsToProcess[parentPid];
 
-        if (code != 0) {
+        if (code != 0 || allData == '') {
             // no more parent processes
             if (Object.keys(pidsToProcess).length == 0) {
                 cb();
