@@ -5,6 +5,10 @@ var spawn = childProcess.spawn;
 var exec = childProcess.exec;
 
 module.exports = function (pid, signal, callback) {
+    if (typeof pid !== "number") {
+        throw new Error("pid must be a number");
+    }
+
     var tree = {};
     var pidsToProcess = {};
     tree[pid] = [];
