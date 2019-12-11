@@ -63,6 +63,11 @@ MIT
 Changelog
 =========
 
+
+## [1.2.2] - 2019-12-11
+### Changed
+- security fix: sanitize `pid` parameter to fix arbitrary code execution vulnerability
+
 ## [1.2.1] - 2018-11-05
 ### Changed
 - added missing LICENSE file
