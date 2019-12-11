@@ -31,4 +31,27 @@ describe('kill()', function(){
             return done()
         })
     })
+
+    it('should reject invalid pid', function(done){
+        var p = fork('./test/spin')
+        assert.ok(p.pid)
+
+        kill('rm -rf /dev/null', function(err) {
+            assert.ok(typeof err === 'object')
+            return done()
+        })
+    })
+
+    it('should reject invalid pids even if no callback', function(done){
+        var p = fork('./test/spin')
+        assert.ok(p.pid)
+
+        try {
+            kill('rm -rf /dev/null')
+            assert.fail('should have thrown')
+        } catch (err) {
+            assert.ok(typeof err === 'object')
+            return done();
+        }
+    })
 })
